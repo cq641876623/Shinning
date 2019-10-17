@@ -16,11 +16,14 @@ function ThreeJsC(dom) {
 
 
     this.composer = null;
-
+    var width=window.innerWidth;
+    var height=window.innerHeight;
 
     /**
      * 基本场景初始化函数
-     * @param dom 执行节点
+     * @param width dom宽度
+     * @param height
+     * 不输入则为默认全屏
      */
     var init=function (width,height) {
         // 支持检查
@@ -32,6 +35,7 @@ function ThreeJsC(dom) {
         context.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
         // 渲染器
         context.renderer = new THREE.WebGLRenderer();
+
         context.renderer.setSize( window.innerWidth, window.innerHeight );
 
         //阴影打开
@@ -39,7 +43,6 @@ function ThreeJsC(dom) {
         context.renderer.shadowMap.type = 0;
 
 
-        context.renderer.setSize( window.innerWidth, window.innerHeight );
 
         context.renderer.shadowMap.enabled = true;
         context.renderer.shadowMap.type = 0;
