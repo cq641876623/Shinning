@@ -297,7 +297,7 @@ function ThreeJsC(domParnet,configure) {
             var selectedObject = intersects[ 0 ].object;
             context.outlinePass.selectedObjects .push( selectedObject);
             if(conf.composer.selectFunction!=null)
-            conf.composer.selectFunction(selectedObject);
+            conf.composer.selectFunction(selectedObject.object                                                                                                                                                            );
         } else {
             context.outlinePass.selectedObjects.pop();
             // outlinePass.selectedObjects = [];
@@ -316,7 +316,9 @@ function ThreeJsC(domParnet,configure) {
         var intersects = raycaster.intersectObjects( context.scene.children,true );
         if(intersects.length > 0){
             console.log("点击事件触发",intersects[0]);
-            if(conf.event)
+            if(conf.event!=null){
+                conf.event['clickFunction'](ev,intersects[0].object);
+            }
         }
     }
 
