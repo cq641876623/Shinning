@@ -1,6 +1,6 @@
 
 
-function ThreeJsC(dom) {
+function ThreeJsC(domParnet,configure) {
     var context=this;
     // 场景
     this.scene=null;
@@ -16,44 +16,130 @@ function ThreeJsC(dom) {
 
 
     this.composer = null;
-    var width=window.innerWidth;
-    var height=window.innerHeight;
+
+    this.outline=null;
+    this.effectFXAA=null;
+
+
+
+    var conf={
+        dom: null,
+        domParnet:document.body,
+        style:{
+            /**
+             * type: 0:fullScreen,1:percent,3:px
+             */
+            width:{size:window.innerWidth ,type:0}
+            , height:{size:window.innerHeight ,type:0}
+        },
+        composer:{
+            switch:false
+        }
+    };
+
+
+
+
+
+    var loadConf=function (dom,c) {
+        if(dom!=null){
+            conf.domParnet=dom;
+        }
+        if(c==null)return;
+        if(c.hasOwnProperty("style")){
+            if(c.style.width!=undefined){
+                if(c.style.width!=""){
+                    if(c.style.width.includes("%")){
+                        conf.style.width.type=1;
+                        conf.style.width.size=parseInt(c.style.width.substring(0,c.style.width.length-1));
+                    }
+                    else if(c.style.width.includes("px")){
+                        conf.style.width.type=2;
+                        conf.style.width.size=parseInt(c.style.width.substring(0,c.style.width.length-2));
+                    }else {
+                        conf.style.width.type=2;
+                        conf.style.width.size=parseInt(c.style.width);
+                    }
+                }
+            }
+            if(c.style.height!=undefined){
+                if(c.style.height!=""){
+                    if(c.style.height.includes("%")){
+                        conf.style.height.type=1;
+                        conf.style.height.size=parseInt(c.style.height.substring(0,c.style.height.length-1));
+                    }
+                    else if(c.style.height.includes("px")){
+                        conf.style.height.type=2;
+                        conf.style.height.size=parseInt(c.style.height.substring(0,c.style.height.length-2));
+                    }
+                    else {
+                        conf.style.height.type=2;
+                        conf.style.height.size=parseInt(c.style.height);
+                    }
+
+                }
+            }
+
+        }
+    }
+
+
+    var loadSize=function(size,t,dom){
+        switch (size.type) {
+            // 全屏
+            case 0:
+                if(t=="width")return window.innerWidth;
+                if (t=="height")return window.innerHeight;
+                // 百分比
+            case 1:
+                if(dom==null){
+                    console.log("当前没有指定节点");
+                    return 0;
+                }else{
+                    if(t=="width")return dom.clientWidth*(size.size/100);
+                    if (t=="height")return dom.clientHeight*(size.size/100);
+                }
+            case 2:
+               return  size.size;
+        }
+    }
+
+    loadConf(domParnet,configure);
 
     /**
      * 基本场景初始化函数
      * @param width dom宽度
      * @param height
+     * @param dom 挂载节点
      * 不输入则为默认全屏
      */
-    var init=function (width,height) {
+    var init=function (domParnet) {
         // 支持检查
-        // if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+        if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
         // 初始化场景
         context.scene = new THREE.Scene();
         // 初始化相机
-        context.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+        context.camera = new THREE.PerspectiveCamera( 45, loadSize(conf.style.width,"width",domParnet)/ loadSize(conf.style.height,"height",domParnet), 0.1, 1000 );
         // 渲染器
         context.renderer = new THREE.WebGLRenderer();
 
-        context.renderer.setSize( window.innerWidth, window.innerHeight );
+        context.renderer.setSize( loadSize(conf.style.width,"width",domParnet),loadSize(conf.style.height,"height",domParnet) );
+
+        console.log("初始化宽高：","width:"+loadSize(conf.style.width,"width",domParnet)+","+"height:"+loadSize(conf.style.height,"height",domParnet));
 
         //阴影打开
         context.renderer.shadowMap.enabled = true;
         context.renderer.shadowMap.type = 0;
-
-
-
-        context.renderer.shadowMap.enabled = true;
-        context.renderer.shadowMap.type = 0;
-        document.body.appendChild( context.renderer.domElement );
-        document.body.appendChild( context.renderer.domElement );
+        console.log(context.renderer.domElement)
+        conf.domParnet.appendChild( context.renderer.domElement );
 
         context.dom=context.renderer.domElement;
 
-        context.scene.background = new THREE.Color( 0xffffff );
 
-        context.composer = new THREE.EffectComposer( context.renderer );
+        context.scene.background = new THREE.Color( 0xffffff );
+        if(conf.composer.switch) context.composer = new THREE.EffectComposer( context.renderer );
 
 
 
@@ -81,28 +167,28 @@ function ThreeJsC(dom) {
             context.scene.add( light );
         }
     }
+
     var defult_background=function(buler){
         if(!buler)return;
         var texture = new THREE.TextureLoader().load( "threeJsCQQ/static/backGround/天空球3.jpg" );
         context.scene.background =texture;
     }
 
-
-
-    var defult_compose=function(){
+    var defult_compose=function(buler){
+        if(!buler)return;
         var renderPass = new THREE.RenderPass( context.scene, context.camera );
         context.composer.addPass( renderPass );
-        var outlinePass = new THREE.OutlinePass( new THREE.Vector2( window.innerWidth, window.innerHeight ), context.scene, context.camera );
-        outlinePass.edgeStrength = 5;//包围线浓度
-        outlinePass.edgeGlow = 0.5;//边缘线范围
-        outlinePass.edgeThickness = 2;//边缘线浓度
-        outlinePass.pulsePeriod = 2;//包围线闪烁频率
-        outlinePass.visibleEdgeColor.set( '#ffffff' );//包围线颜色
-        outlinePass.hiddenEdgeColor.set( '#190a05' );//被遮挡的边界线颜色
+        context.outlinePass = new THREE.OutlinePass( new THREE.Vector2( window.innerWidth, window.innerHeight ), context.scene, context.camera );
+        context.outlinePass.edgeStrength = 5;//包围线浓度
+        context.outlinePass.edgeGlow = 0.5;//边缘线范围
+        context.outlinePass.edgeThickness = 2;//边缘线浓度
+        context.outlinePass.pulsePeriod = 2;//包围线闪烁频率
+        context.outlinePass.visibleEdgeColor.set( '#ffffff' );//包围线颜色
+        context.outlinePass.hiddenEdgeColor.set( '#190a05' );//被遮挡的边界线颜色
 
         context.composer.addPass( outlinePass );
-        var effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
-        effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
+        context.effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
+        context.effectFXAA.uniforms[ 'resolution' ].value.set( 1 / loadSize(conf.style.width,"width",conf.domParnet), 1 / loadSize(conf.style.height,"height",conf.domParnet) );
         effectFXAA.renderToScreen = true;
         context.composer.addPass( effectFXAA );
         console.log(context.composer)
@@ -110,13 +196,12 @@ function ThreeJsC(dom) {
 
         /**
      * 运行渲染，默认为false
-     * @param buler 简单无后处理 true:简单 ，false：有后处理
+     * @param buler 简单无后处理 true:有后处理 ，false：无
      */
     var running=function(buler){
         function animateNoComposer() {
             requestAnimationFrame( animateNoComposer );
             // render();
-            // composer.render();
             context.controls.update();
             context.renderer.render( context.scene, context.camera );
         }
@@ -124,32 +209,27 @@ function ThreeJsC(dom) {
         function animateComposer() {
             requestAnimationFrame( animateNoComposer );
             // render();
-            // composer.render();
             context.controls.update();
             context.composer.render();
         }
         if(buler){
-            animateNoComposer();
-        }else {
             animateComposer();
+
+        }else {
+            animateNoComposer();
         }
     }
 
 
 
-
-
-
-
     // 基本场景初始化
-    init(dom);
+    init(domParnet);
     // 基本控制初始化
     init_controls();
 
-    defult_compose();
+    defult_compose(conf.composer.switch);
 
     defult_light(true);
-
 
 
     defult_background(true);
@@ -159,11 +239,26 @@ function ThreeJsC(dom) {
     var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
     var cube = new THREE.Mesh( geometry, material );
     context.scene.add( cube );
-    var texture = new THREE.TextureLoader().load( "threeJsCQQ/static/backGround/天空球3.jpg" );
-    context.scene.background =texture;
+
 
     context.camera.position.z = 10;
-    running(false);
+    running(conf.composer.switch);
+
+   var  onWindowResize=function() {
+       context.camera.aspect = loadSize(conf.style.width,"width",conf.domParnet)/ loadSize(conf.style.height,"height",conf.domParnet);
+       context.camera.updateProjectionMatrix();
+
+       console.log("context.dom",conf.domParnet)
+
+       context.renderer.setSize( loadSize(conf.style.width,"width",conf.domParnet),loadSize(conf.style.height,"height",conf.domParnet) );
+
+       if(conf.composer.switch){
+           context.composer.setSize( loadSize(conf.style.width,"width",conf.domParnet),loadSize(conf.style.height,"height",conf.domParnet) );
+           context.effectFXAA.uniforms[ 'resolution' ].value.set( 1 / loadSize(conf.style.width,"width",conf.domParnet), 1 / loadSize(conf.style.height,"height",conf.domParnet) );
+       }
+    }
+
+    window.addEventListener( 'resize', onWindowResize, false );
 
 
 

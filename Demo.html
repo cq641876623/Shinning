@@ -36,14 +36,15 @@
 
 
 <body>
-<div>该Threejs版本非最新版</div>
+<!--<div>该Threejs版本非最新版</div>-->
+<div id="can" style="width: 500px;height: 500px;background: red"></div>
 
 
 
 </body>
 
 <script>
-    var threejs=new ThreeJsC();
+    var threejs=new ThreeJsC(document.querySelector("#can"),{style:{width:"30%",height:"300px"}});
 
 
 </script>
