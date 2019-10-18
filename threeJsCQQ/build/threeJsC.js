@@ -17,14 +17,13 @@ function ThreeJsC(domParnet,configure) {
 
     this.composer = null;
 
-    this.outline=null;
+    this.outlinePass=null;
     this.effectFXAA=null;
 
 
     var raycaster = new THREE.Raycaster();
 
     var mouse = new THREE.Vector2();
-
 
 
     var conf={
@@ -38,55 +37,71 @@ function ThreeJsC(domParnet,configure) {
             , height:{size:window.innerHeight ,type:0}
         },
         composer:{
-            switch:true
+            switch:true,
+
+        },
+        defultScene:{
+            background_type:0,
+            background_imgUrl:[]
+        },
+        event:{
+            selectFunction:null,
+            clickFunction:null,
         }
     };
 
 
-
-
-
-    var loadConf=function (dom,c) {
-        if(dom!=null){
-            conf.domParnet=dom;
-        }
-        if(c==null)return;
-        if(c.hasOwnProperty("style")){
-            if(c.style.width!=undefined){
-                if(c.style.width!=""){
-                    if(c.style.width.includes("%")){
-                        conf.style.width.type=1;
-                        conf.style.width.size=parseInt(c.style.width.substring(0,c.style.width.length-1));
-                    }
-                    else if(c.style.width.includes("px")){
-                        conf.style.width.type=2;
-                        conf.style.width.size=parseInt(c.style.width.substring(0,c.style.width.length-2));
-                    }else {
-                        conf.style.width.type=2;
-                        conf.style.width.size=parseInt(c.style.width);
+    /**
+     * 导入配置信息
+     * @param dom
+     * @param c
+     */
+        function loadConf(c) {
+            if(c==null)return;
+            if(c.dom!=null){
+                conf.domParnet=c.dom;
+            }
+            if(c.hasOwnProperty("style")){
+                if(c.style.width!=undefined){
+                    if(c.style.width!=""){
+                        if(c.style.width.includes("%")){
+                            conf.style.width.type=1;
+                            conf.style.width.size=parseInt(c.style.width.substring(0,c.style.width.length-1));
+                        }
+                        else if(c.style.width.includes("px")){
+                            conf.style.width.type=2;
+                            conf.style.width.size=parseInt(c.style.width.substring(0,c.style.width.length-2));
+                        }else {
+                            conf.style.width.type=2;
+                            conf.style.width.size=parseInt(c.style.width);
+                        }
                     }
                 }
-            }
-            if(c.style.height!=undefined){
-                if(c.style.height!=""){
-                    if(c.style.height.includes("%")){
-                        conf.style.height.type=1;
-                        conf.style.height.size=parseInt(c.style.height.substring(0,c.style.height.length-1));
-                    }
-                    else if(c.style.height.includes("px")){
-                        conf.style.height.type=2;
-                        conf.style.height.size=parseInt(c.style.height.substring(0,c.style.height.length-2));
-                    }
-                    else {
-                        conf.style.height.type=2;
-                        conf.style.height.size=parseInt(c.style.height);
-                    }
+                if(c.style.height!=undefined){
+                    if(c.style.height!=""){
+                        if(c.style.height.includes("%")){
+                            conf.style.height.type=1;
+                            conf.style.height.size=parseInt(c.style.height.substring(0,c.style.height.length-1));
+                        }
+                        else if(c.style.height.includes("px")){
+                            conf.style.height.type=2;
+                            conf.style.height.size=parseInt(c.style.height.substring(0,c.style.height.length-2));
+                        }
+                        else {
+                            conf.style.height.type=2;
+                            conf.style.height.size=parseInt(c.style.height);
+                        }
 
+                    }
                 }
+
+            }
+            if(c.composer!=null){
+                conf.composer.switch= c.composer['switch']==null?true:c.composer['switch'];
+                conf.composer.selectFunction=c.composer['selectFunction']==null?true:c.composer['selectFunction'];
             }
 
         }
-    }
 
 
     var loadSize=function(size,t,dom){
@@ -109,7 +124,7 @@ function ThreeJsC(domParnet,configure) {
         }
     }
 
-    loadConf(domParnet,configure);
+
 
     /**
      * 基本场景初始化函数
@@ -227,33 +242,18 @@ function ThreeJsC(domParnet,configure) {
 
 
 
-    // 基本场景初始化
-    init(domParnet);
-    // 基本控制初始化
-    init_controls();
-
-    defult_compose(conf.composer.switch);
-
-    defult_light(true);
 
 
-    defult_background(true);
 
 
-    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
-    var cube = new THREE.Mesh( geometry, material );
-    context.scene.add( cube );
 
-
-    context.camera.position.z = 10;
-    running(conf.composer.switch);
-
-   var  onWindowResize=function() {
+    /**
+     * 窗口调整
+     */
+    var  onWindowResize=function() {
        context.camera.aspect = loadSize(conf.style.width,"width",conf.domParnet)/ loadSize(conf.style.height,"height",conf.domParnet);
        context.camera.updateProjectionMatrix();
 
-       console.log("context.dom",conf.domParnet)
 
        context.renderer.setSize( loadSize(conf.style.width,"width",conf.domParnet),loadSize(conf.style.height,"height",conf.domParnet) );
 
@@ -261,9 +261,11 @@ function ThreeJsC(domParnet,configure) {
            context.composer.setSize( loadSize(conf.style.width,"width",conf.domParnet),loadSize(conf.style.height,"height",conf.domParnet) );
            context.effectFXAA.uniforms[ 'resolution' ].value.set( 1 / loadSize(conf.style.width,"width",conf.domParnet), 1 / loadSize(conf.style.height,"height",conf.domParnet) );
        }
+
+       console.log("响应窗口变化：","width: "+conf.dom.clientWidth+" , "+"height: "+conf.dom.clientHeight);
     }
 
-    conf.domParnet.addEventListener( 'resize', onWindowResize, false );
+
 
     var onTouchMove=function(event) {
         var x, y;
@@ -294,8 +296,8 @@ function ThreeJsC(domParnet,configure) {
             context.outlinePass.selectedObjects.pop();
             var selectedObject = intersects[ 0 ].object;
             context.outlinePass.selectedObjects .push( selectedObject);
-            console.log("指向当前",selectedObject);
-
+            if(conf.composer.selectFunction!=null)
+            conf.composer.selectFunction(selectedObject);
         } else {
             context.outlinePass.selectedObjects.pop();
             // outlinePass.selectedObjects = [];
@@ -306,10 +308,52 @@ function ThreeJsC(domParnet,configure) {
     }
 
     console.log("挂载事件",context.dom)
-    if(context.composer!=null){
-        context.dom.addEventListener( 'mousemove', onTouchMove );
-        context.dom.addEventListener( 'touchmove', onTouchMove );
+
+    function onClickObj(ev) {
+        raycaster.setFromCamera( mouse,context.camera );
+
+        // 计算物体和射线的焦点
+        var intersects = raycaster.intersectObjects( context.scene.children,true );
+        if(intersects.length > 0){
+            console.log("点击事件触发",intersects[0]);
+            if(conf.event)
+        }
     }
+
+
+
+    function  initEvent() {
+        window.addEventListener( 'resize', onWindowResize, false );
+        if(context.composer!=null){
+            context.dom.addEventListener( 'mousemove', onTouchMove,false );
+            context.dom.addEventListener( 'touchmove', onTouchMove ,false);
+            context.dom.addEventListener( 'click', onClickObj ,false);
+
+        }
+    }
+
+    loadConf(domParnet,configure);
+    // 基本场景初始化
+    init(domParnet);
+    // 基本控制初始化
+    init_controls();
+
+    defult_compose(conf.composer.switch);
+
+    defult_light(true);
+
+
+    defult_background(true);
+
+    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+    var cube = new THREE.Mesh( geometry, material );
+    context.scene.add( cube );
+
+
+    context.camera.position.z = 10;
+    initEvent();
+    running(conf.composer.switch);
 
 
 
