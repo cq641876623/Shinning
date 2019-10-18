@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9d38a9d1-db9d-483e-95ee-d7278a3258c0" name="Default Changelist" comment="添加响应式canvas">
+      <change beforePath="$PROJECT_DIR$/Demo.html" beforeDir="false" afterPath="$PROJECT_DIR$/Demo.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/threeJsCQQ/build/threeJsC.js" beforeDir="false" afterPath="$PROJECT_DIR$/threeJsCQQ/build/threeJsC.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -19,8 +20,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Demo.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="196">
-              <caret line="23" column="11" lean-forward="true" selection-start-line="23" selection-start-column="11" selection-end-line="23" selection-end-column="11" />
+            <state relative-caret-position="424">
+              <caret line="45" column="8" lean-forward="true" selection-start-line="45" selection-start-column="8" selection-end-line="45" selection-end-column="8" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
               </folding>
@@ -31,10 +32,9 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/threeJsCQQ/build/threeJsC.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="527">
-              <caret line="294" column="38" lean-forward="true" selection-start-line="294" selection-start-column="38" selection-end-line="294" selection-end-column="38" />
+            <state relative-caret-position="440">
+              <caret line="290" lean-forward="true" selection-start-line="290" selection-end-line="290" />
               <folding>
-                <element signature="e#614#1520#0" />
                 <element signature="e#991#2498#0" />
                 <element signature="e#2189#2408#0" />
                 <element signature="e#449#564#0" />
@@ -42,7 +42,6 @@
                 <element signature="e#1542#1984#0" />
                 <element signature="e#2022#2301#0" />
                 <element signature="e#2343#2516#0" />
-                <element signature="e#2553#3486#0" />
                 <element signature="e#3496#3575#0" />
                 <element signature="e#3607#4237#0" />
                 <element signature="n#!!block;n#onWindowResize#0;n#!!block;n#ThreeJsC#0" />
@@ -79,13 +78,16 @@
       <find>runn</find>
       <find>.addPass( outlinePass );</find>
       <find>dom</find>
-      <find>composer</find>
       <find>composer.switch</find>
       <find>switch</find>
       <find>selectFunction</find>
       <find>outline</find>
-      <find>check</find>
       <find>context.dom</find>
+      <find>event</find>
+      <find>check</find>
+      <find>ev</find>
+      <find>挂载事件</find>
+      <find>composer</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -222,7 +224,7 @@
       <option name="presentableId" value="Default" />
       <updated>1571294985461</updated>
       <workItem from="1571294988443" duration="8395000" />
-      <workItem from="1571360881151" duration="20238000" />
+      <workItem from="1571360881151" duration="21042000" />
     </task>
     <task id="LOCAL-00001" summary="更新">
       <created>1571305914720</created>
@@ -249,7 +251,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="28633000" />
+    <option name="totallyTimeSpent" value="29437000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -362,8 +364,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Demo.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="23" column="11" lean-forward="true" selection-start-line="23" selection-start-column="11" selection-end-line="23" selection-end-column="11" />
+        <state relative-caret-position="424">
+          <caret line="45" column="8" lean-forward="true" selection-start-line="45" selection-start-column="8" selection-end-line="45" selection-end-column="8" />
           <folding>
             <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
@@ -372,10 +374,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/threeJsCQQ/build/threeJsC.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="294" column="38" lean-forward="true" selection-start-line="294" selection-start-column="38" selection-end-line="294" selection-end-column="38" />
+        <state relative-caret-position="440">
+          <caret line="290" lean-forward="true" selection-start-line="290" selection-end-line="290" />
           <folding>
-            <element signature="e#614#1520#0" />
             <element signature="e#991#2498#0" />
             <element signature="e#2189#2408#0" />
             <element signature="e#449#564#0" />
@@ -383,7 +384,6 @@
             <element signature="e#1542#1984#0" />
             <element signature="e#2022#2301#0" />
             <element signature="e#2343#2516#0" />
-            <element signature="e#2553#3486#0" />
             <element signature="e#3496#3575#0" />
             <element signature="e#3607#4237#0" />
             <element signature="n#!!block;n#onWindowResize#0;n#!!block;n#ThreeJsC#0" />

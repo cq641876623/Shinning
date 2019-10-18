@@ -44,7 +44,19 @@
 </body>
 
 <script>
-    var threejs=new ThreeJsC({dom:document.querySelector("#can")});
+    var threejs=new ThreeJsC(
+        {
+        dom:document.querySelector("#can"),
+            event:{
+                selectFunction:function (obj) {
+                    console.log("selectFunction.obj",obj)
+                },
+                clickFunction:function (ev,obj) {
+                    console.log("clickFunction.ev",ev)
+                    console.log("clickFunction.obj",obj)
+                }
+            }
+        });
 
 
 </script>

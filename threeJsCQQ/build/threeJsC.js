@@ -56,7 +56,7 @@ function ThreeJsC(domParnet,configure) {
      * @param dom
      * @param c
      */
-        function loadConf(c) {
+    function loadConf(c) {
             if(c==null)return;
             if(c.dom!=null){
                 conf.domParnet=c.dom;
@@ -100,6 +100,7 @@ function ThreeJsC(domParnet,configure) {
                 conf.composer.switch= c.composer['switch']==null?true:c.composer['switch'];
                 conf.composer.selectFunction=c.composer['selectFunction']==null?true:c.composer['selectFunction'];
             }
+            conf.event=c['event'];
 
         }
 
@@ -296,8 +297,10 @@ function ThreeJsC(domParnet,configure) {
             context.outlinePass.selectedObjects.pop();
             var selectedObject = intersects[ 0 ].object;
             context.outlinePass.selectedObjects .push( selectedObject);
-            if(conf.composer.selectFunction!=null)
-            conf.composer.selectFunction(selectedObject.object                                                                                                                                                            );
+            if(conf.event!=null&&conf.event['selectFunction']!=null){
+                conf.event.selectFunction(selectedObject);
+                console.log('鼠标自定义移动事件挂载完成');
+            }
         } else {
             context.outlinePass.selectedObjects.pop();
             // outlinePass.selectedObjects = [];
@@ -307,7 +310,6 @@ function ThreeJsC(domParnet,configure) {
 
     }
 
-    console.log("挂载事件",context.dom)
 
     function onClickObj(ev) {
         raycaster.setFromCamera( mouse,context.camera );
@@ -318,6 +320,7 @@ function ThreeJsC(domParnet,configure) {
             console.log("点击事件触发",intersects[0]);
             if(conf.event!=null){
                 conf.event['clickFunction'](ev,intersects[0].object);
+                console.log("自定义点击事件挂载完成");
             }
         }
     }
@@ -326,11 +329,11 @@ function ThreeJsC(domParnet,configure) {
 
     function  initEvent() {
         window.addEventListener( 'resize', onWindowResize, false );
+        console.log("window事件挂载完成")
         if(context.composer!=null){
             context.dom.addEventListener( 'mousemove', onTouchMove,false );
             context.dom.addEventListener( 'touchmove', onTouchMove ,false);
             context.dom.addEventListener( 'click', onClickObj ,false);
-
         }
     }
 
