@@ -21,6 +21,11 @@ function ThreeJsC(domParnet,configure) {
     this.effectFXAA=null;
 
 
+    var raycaster = new THREE.Raycaster();
+
+    var mouse = new THREE.Vector2();
+
+
 
     var conf={
         dom: null,
@@ -33,7 +38,7 @@ function ThreeJsC(domParnet,configure) {
             , height:{size:window.innerHeight ,type:0}
         },
         composer:{
-            switch:false
+            switch:true
         }
     };
 
@@ -136,6 +141,7 @@ function ThreeJsC(domParnet,configure) {
         conf.domParnet.appendChild( context.renderer.domElement );
 
         context.dom=context.renderer.domElement;
+        conf.dom=context.renderer.domElement;
 
 
         context.scene.background = new THREE.Color( 0xffffff );
@@ -186,11 +192,11 @@ function ThreeJsC(domParnet,configure) {
         context.outlinePass.visibleEdgeColor.set( '#ffffff' );//包围线颜色
         context.outlinePass.hiddenEdgeColor.set( '#190a05' );//被遮挡的边界线颜色
 
-        context.composer.addPass( outlinePass );
+        context.composer.addPass( context.outlinePass );
         context.effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
         context.effectFXAA.uniforms[ 'resolution' ].value.set( 1 / loadSize(conf.style.width,"width",conf.domParnet), 1 / loadSize(conf.style.height,"height",conf.domParnet) );
-        effectFXAA.renderToScreen = true;
-        context.composer.addPass( effectFXAA );
+        context.effectFXAA.renderToScreen = true;
+        context.composer.addPass( context.effectFXAA );
         console.log(context.composer)
     }
 
@@ -201,14 +207,13 @@ function ThreeJsC(domParnet,configure) {
     var running=function(buler){
         function animateNoComposer() {
             requestAnimationFrame( animateNoComposer );
-            // render();
             context.controls.update();
             context.renderer.render( context.scene, context.camera );
         }
 
         function animateComposer() {
-            requestAnimationFrame( animateNoComposer );
-            // render();
+            requestAnimationFrame( animateComposer );
+            checkIntersection();
             context.controls.update();
             context.composer.render();
         }
@@ -258,7 +263,54 @@ function ThreeJsC(domParnet,configure) {
        }
     }
 
-    window.addEventListener( 'resize', onWindowResize, false );
+    conf.domParnet.addEventListener( 'resize', onWindowResize, false );
+
+    var onTouchMove=function(event) {
+        var x, y;
+        if ( event.changedTouches ) {
+
+            x = event.changedTouches[ 0 ].pageX;
+            y = event.changedTouches[ 0 ].pageY;
+
+        } else {
+
+            x = event.clientX;
+            y = event.clientY;
+
+        }
+        mouse.x = ( x / loadSize(conf.style.width,"width",conf.domParnet) ) * 2 - 1;
+        mouse.y = - ( y / loadSize(conf.style.height,"height",conf.domParnet) ) * 2 + 1;
+
+
+    }
+
+    function checkIntersection() {
+
+        raycaster.setFromCamera( mouse, context.camera );
+
+        var intersects = raycaster.intersectObjects( context.scene.children, true );
+
+        if ( intersects.length > 0 ) {
+            context.outlinePass.selectedObjects.pop();
+            var selectedObject = intersects[ 0 ].object;
+            context.outlinePass.selectedObjects .push( selectedObject);
+            console.log("指向当前",selectedObject);
+
+        } else {
+            context.outlinePass.selectedObjects.pop();
+            // outlinePass.selectedObjects = [];
+
+        }
+
+
+    }
+
+    console.log("挂载事件",context.dom)
+    if(context.composer!=null){
+        context.dom.addEventListener( 'mousemove', onTouchMove );
+        context.dom.addEventListener( 'touchmove', onTouchMove );
+    }
+
 
 
 
