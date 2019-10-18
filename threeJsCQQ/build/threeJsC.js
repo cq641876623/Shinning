@@ -38,7 +38,6 @@ function ThreeJsC(domParnet,configure) {
         },
         composer:{
             switch:true,
-
         },
         defultScene:{
             background_type:0,
@@ -98,7 +97,6 @@ function ThreeJsC(domParnet,configure) {
             }
             if(c.composer!=null){
                 conf.composer.switch= c.composer['switch']==null?true:c.composer['switch'];
-                conf.composer.selectFunction=c.composer['selectFunction']==null?true:c.composer['selectFunction'];
             }
             conf.event=c['event'];
 
